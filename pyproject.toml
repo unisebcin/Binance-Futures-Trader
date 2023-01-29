@@ -12,6 +12,7 @@ binance-futures-connector = "^3.3.0"
 pandas = "^1.5.3"
 requests = "^2.28.2"
 python-dotenv = "^0.21.1"
+flake8 = "^6.0.0"
 
 
 [build-system]
