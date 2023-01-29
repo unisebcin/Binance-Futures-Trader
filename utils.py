@@ -7,8 +7,6 @@ from datetime import datetime
 import json
 from binance.um_futures import UMFutures
 import math
-
-
 # pip install binance-futures-connector
 
 
@@ -182,7 +180,7 @@ def calculate_ema100():
 def telegramBotSendText(bot_message):
     """ TELEGRAM UZERINDEN ISTENILEN MESAJ GONDERILIR """
     bot_token = '5794773301:AAHXDVijv7DqsTyEvWeiQ9vEugg8MRMunZQ'
-    chat_id = '-728427299'
+    chat_id = '-1001833203493'  # '-728427299' --> hizmet verdigim grubun chat id'si
     msg = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + chat_id + \
           '&parse_mode=HTML&disable_web_page_preview=True&text=' + bot_message
     requests.get(msg)

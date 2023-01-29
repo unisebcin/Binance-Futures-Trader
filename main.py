@@ -51,7 +51,6 @@ if __name__ == '__main__':
     client = utils.baglan()
     if not client:
         exit()
-    initial_state = 'BUY'
     utils.telegramBotSendText('BİLGİ : \nBinance Trader Programı Başladı...')
     minQty = config.settings.minQty
     initial_state = utils.initial_state(client)
