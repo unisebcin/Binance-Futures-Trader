@@ -5,7 +5,7 @@ class SETTINGS:
     SLEEP_TIME = 15  # Sleep time in minutes
     LEVERAGE = 1
     SET_INITIAL_SLEEP = 0
-    MODE = 0  # 0 for test mode, 1 for run mode
+    MODE = 1  # 0 for test mode, 1 for run mode
     minQty = 0.4
 
 

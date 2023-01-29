@@ -19,21 +19,21 @@ def main():
             utils.close_position(client)
             time.sleep(2)
 
-        resp = client.new_order(symbol=config.settings.SYMBOL, side='BUY', type='MARKET', quantity=0.4)
+        client.new_order(symbol=config.settings.SYMBOL, side='BUY', type='MARKET', quantity=0.4)
         time.sleep(5)
         balance_usdt, balance_symbol = utils.get_usdt_trb_balance(client)
         if balance_symbol != 0.4:
             utils.telegramBotSendText('ÖNEMLİ: TEST BAŞARISIZ! LÜTFEN HESABINIZI MANUEL OLARAK İNCELEYİN...')
             exit()
 
-        resp = client.new_order(symbol=config.settings.SYMBOL, side='SELL', type='MARKET', quantity=0.8)
+        client.new_order(symbol=config.settings.SYMBOL, side='SELL', type='MARKET', quantity=0.8)
         time.sleep(5)
         balance_usdt, balance_symbol = utils.get_usdt_trb_balance(client)
         if balance_symbol != -0.4:
             utils.telegramBotSendText('ÖNEMLİ: TEST BAŞARISIZ! LÜTFEN HESABINIZI MANUEL OLARAK İNCELEYİN...')
             exit()
 
-        resp = client.new_order(symbol=config.settings.SYMBOL, side='BUY', type='MARKET', quantity=0.4)
+        client.new_order(symbol=config.settings.SYMBOL, side='BUY', type='MARKET', quantity=0.4)
         time.sleep(5)
         balance_usdt, balance_symbol = utils.get_usdt_trb_balance(client)
         if balance_symbol != 0:
@@ -47,4 +47,3 @@ def main():
     except Exception as e:
         utils.telegramBotSendText('ÖNEMLİ: TEST ESNASINDA HATA İLE KARŞILAŞILDI. \n' + str(e))
         exit()
-

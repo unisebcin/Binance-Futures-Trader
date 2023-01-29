@@ -7,6 +7,8 @@ from datetime import datetime
 import json
 from binance.um_futures import UMFutures
 import math
+
+
 # pip install binance-futures-connector
 
 
@@ -18,7 +20,8 @@ def baglan():
     while n < 3:
         try:
             n += 1
-            client = UMFutures(key=api_key, secret=api_secret, timeout=15) # Client(api_key=api_key, api_secret=api_secret)
+            client = UMFutures(key=api_key, secret=api_secret,
+                               timeout=15)  # Client(api_key=api_key, api_secret=api_secret)
             return client
         except requests.exceptions.ReadTimeout:
             print("requests.readTimeout")
@@ -37,7 +40,7 @@ def getAccount(client):
     """ MUSTERI HEABINDAKI BILGILER TEMIN EDILIYOR.
     ONEMLI BIR NOKTA OLDUGUNDAN BINANCE KAYNAKLI OLASI HATALARA KARSI MAKSIMUM 5 KEZ ISTEK YAPILIYOR."""
     n = 0
-    while n<5:
+    while n < 5:
         try:
             n += 1
             return client.account()
@@ -48,7 +51,7 @@ def getAccount(client):
             print("requests.exceptions.ConnectionError - get_account")
             time.sleep(3)
         except Exception as e:
-            print('Error during getting account info : ' , e)
+            print('Error during getting account info : ', e)
             time.sleep(3)
     telegramBotSendText("ÖNEMLİ : \n Hesap bilgilerini alırken hata oluştu. \n "
                         "İnternet bağlantınızı kontrol edin. 10 dakika bekleyin ve programı yeniden başlatın. \n "
@@ -72,6 +75,7 @@ def get_usdt_trb_balance(client):
     positions = pd.DataFrame(account['positions'])
     balance_usdt = float(balance.query("asset == 'USDT'").reset_index(drop=True)['availableBalance'][0])
     balance_symbol = float(positions.query(f"symbol == '{config.settings.SYMBOL}'").reset_index()['positionAmt'][0])
+
     return balance_usdt, balance_symbol
 
 
@@ -86,7 +90,8 @@ def initial_state(client):
 
         price = get_closing_price(client)
         ema100 = round(calculate_ema100()["EMA"][-2], 2)
-        config.settings.LEVERAGE = int(positions.query(f"symbol == '{config.settings.SYMBOL}'").get('leverage').values[0])
+        config.settings.LEVERAGE = int(positions.query(f"symbol == '{config.settings.SYMBOL}'").get('leverage').
+                                       values[0])
 
         balance_current_position = ''
         if balance_symbol != 0:
@@ -110,7 +115,7 @@ def initial_state(client):
             system_time = datetime.fromtimestamp(r.json()['serverTime'] / 1000).minute
         else:
             system_time = datetime.now().minute
-        _,  curr_time = divmod(system_time, 15)
+        _, curr_time = divmod(system_time, 15)
         config.settings.SET_INITIAL_SLEEP = (15 - curr_time) * 60
 
         return current_state
@@ -146,8 +151,8 @@ def calculate_ema100():
     symbol = config.settings.SYMBOL
     interval = config.settings.KLINE_PERIOD
     if interval != '15m':
-        telegramBotSendText(""" ÖNEMLİ: 
-        EMA100 hesaplaması 15 dakikalık perioda göre yapılmalıdır!! 
+        telegramBotSendText(""" ÖNEMLİ:
+        EMA100 hesaplaması 15 dakikalık perioda göre yapılmalıdır!!
         Bunu değiştirmek istiyorsanız, yazılımda genel bir değişiklik yapmak gerekecektir.
         """)
         exit()
@@ -171,14 +176,15 @@ def calculate_ema100():
     df = df.astype(float)
 
     df["EMA"] = df["close"].ewm(span=100, adjust=False).mean()
-    return df[["open", "high", "low", "close","EMA"]]
+    return df[["open", "high", "low", "close", "EMA"]]
 
 
 def telegramBotSendText(bot_message):
     """ TELEGRAM UZERINDEN ISTENILEN MESAJ GONDERILIR """
     bot_token = '5794773301:AAHXDVijv7DqsTyEvWeiQ9vEugg8MRMunZQ'
     chat_id = '-728427299'
-    msg = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + chat_id + '&parse_mode=HTML&disable_web_page_preview=True&text=' + bot_message
+    msg = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + chat_id + \
+          '&parse_mode=HTML&disable_web_page_preview=True&text=' + bot_message
     requests.get(msg)
 
 
@@ -212,7 +218,7 @@ def balance_check(client):
     """ISLEM YAPACAK KADAR PARA VE COIN YOK ISE MESAJ GONDERILIR VE SISTEM KAPATILIR."""
     balance_usdt, balance_symbol = get_usdt_trb_balance(client)
     price = get_price()
-    balance = balance_usdt + abs(balance_symbol)*price
+    balance = balance_usdt + abs(balance_symbol) * price
     if balance < 11:
         telegramBotSendText('ÖNEMLİ : \n FUTURES USDT Bakiyenize para transfer edin. Bakiyeniz toplamda $11 altında \n'
                             'Binance Trader programı kapanacak. Transfer tamamlandığında programı tekrar başlatın.')
@@ -238,12 +244,12 @@ def close_position(client):
     side = 'SELL' if balance_symbol > 0 else 'BUY'
     if abs(balance_symbol) < config.settings.minQty:
         side2 = 'BUY' if side == 'SELL' else 'SELL'
-        resp = client.new_order(symbol=config.settings.SYMBOL, side=side2, type='MARKET', quantity=0.4)
+        client.new_order(symbol=config.settings.SYMBOL, side=side2, type='MARKET', quantity=0.4)
         time.sleep(2)
         _, balance_symbol = get_usdt_trb_balance(client)
-        resp = client.new_order(symbol=config.settings.SYMBOL, side=side, type='MARKET', quantity=abs(balance_symbol))
+        client.new_order(symbol=config.settings.SYMBOL, side=side, type='MARKET', quantity=abs(balance_symbol))
     else:
-        resp = client.new_order(symbol=config.settings.SYMBOL, side=side, type='MARKET', quantity=abs(balance_symbol))
+        client.new_order(symbol=config.settings.SYMBOL, side=side, type='MARKET', quantity=abs(balance_symbol))
 
 
 def new_order(client, side):
@@ -256,7 +262,8 @@ def new_order(client, side):
 
     price = get_price()
     balance_usdt, _ = get_usdt_trb_balance(client)
-    qty = round(math.floor(min(balance_usdt, config.settings.MAX_AMOUNT) * 10 / price) / 10, 1) * config.settings.LEVERAGE
+    qty = round(math.floor(min(balance_usdt, config.settings.MAX_AMOUNT) * 10 / price) / 10,
+                1) * config.settings.LEVERAGE
     resp = client.new_order(symbol=config.settings.SYMBOL, side=side, type='MARKET', quantity=qty)
 
     return resp
@@ -292,8 +299,8 @@ def check_ema_period():
 def get_historical_kline_data(client):
     data = client.klines(symbol=config.settings.SYMBOL, interval=config.settings.KLINE_PERIOD, limit=200)
     df = pd.DataFrame(data, columns=["timestamp", "open", "high", "low", "close", "volume", "close_time",
-                                "quote_asset_volume", "number_of_trades", "taker_buy_base_asset_volume",
-                                "taker_buy_quote_asset_volume", "ignore"])
+                                     "quote_asset_volume", "number_of_trades", "taker_buy_base_asset_volume",
+                                     "taker_buy_quote_asset_volume", "ignore"])
     return df[["timestamp", "open", "high", "low", "close"]]
 
 
