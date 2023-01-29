@@ -1,5 +1,7 @@
 # BINANCE TRADER PROGRAMI
 
+[![Python application](https://github.com/unisebcin/YahooMail/actions/workflows/python-app.yml/badge.svg)](https://github.com/unisebcin/YahooMail/actions/workflows/python-app.yml)
+
 ## Çalıştırma Öncesi Yapılması Gerekenler
 
 - Bütün dosyalar aynı klasör içerisinde bulunmalıdır.
